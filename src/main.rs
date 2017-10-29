@@ -2,6 +2,7 @@ use std::string::String;
 use std::io::{self, Write};
 
 mod connection;
+mod btree;
 
 fn prompt() {
     print!("> ");

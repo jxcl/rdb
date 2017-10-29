@@ -1,19 +1,23 @@
 use std::collections::HashMap;
 use std::string::String;
 
+use btree;
+
 pub enum ConnectionResult {
     Output(String),
     Empty
 }
 
 pub struct DbConnection {
-    connection: HashMap<String, String>,
+    connection: btree::BTree
 }
 
 impl DbConnection {
     pub fn new() -> DbConnection {
+        let tree = btree::BTree::new("test.db").unwrap();
+
         DbConnection {
-            connection: HashMap::new()
+            connection: tree
         }
     }
 
@@ -28,12 +32,12 @@ impl DbConnection {
         if command == "set" {
             let key = match tokens.next() {
                 Some(k) => k,
-                None => return Err("")
+                None => return Err("Key not provided")
             };
 
             let value = match tokens.next() {
                 Some(v) => v,
-                None => return Err(""),
+                None => return Err("Value not provided"),
             };
 
             self.set(key, value);
@@ -43,7 +47,7 @@ impl DbConnection {
         } else if command == "get" {
             let key = match tokens.next() {
                 Some(k) => k,
-                None => return Err(""),
+                None => return Err("Key not provided"),
             };
 
             match self.get(key) {
@@ -56,10 +60,10 @@ impl DbConnection {
     }
 
     fn set(&mut self, key: &str, value: &str) {
-        self.connection.insert(key.to_string(), value.to_string());
+        self.connection.insert(key, value).unwrap();
     }
 
     fn get(&self, key: &str) -> Option<&String> {
-        self.connection.get(&key.to_string())
+        None
     }
 }
